@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const Papa = require('papaparse');
 const fs = require('fs');
+const collect = require('collect.js');
+const csv = require('csv-parser');
 
 //Define a schema for the uploaded data
 const uploadSchema = new mongoose.Schema({
@@ -51,12 +53,12 @@ const fileHandler = async (req, res) => {
       },
     });
     try {
-      await upload.save();      
+      await upload.save();
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: 'Error uploading file' });
     }
-    
+
   }
   return res.json({ success: true });
 };
@@ -64,28 +66,83 @@ const fileHandler = async (req, res) => {
 
 const getAllColumns = async (req, res) => {
   try {
-      console.log(req.body);
-      var files = req.body;
-      // const columns = await Upload.distinct('file.columns');
-      // console.log(files)
-      const columns = [];
+    console.log(req.body);
+    var files = req.body;
+    // const columns = await Upload.distinct('file.columns');
+    // console.log(files)
+    const columns = [];
 
-      var fileNames = Object.values(files);
+    var fileNames = Object.values(files);
 
-      for(let i = 0; i < fileNames.length; i++){
-        const doc = await Upload.findOne({name: fileNames[i]});
-        const docCol = doc.file.columns;
-        columns.push(...docCol)
-      }
-      
-      console.log(columns);
-      res.json({ columns });
+    for (let i = 0; i < fileNames.length; i++) {
+      const doc = await Upload.findOne({ name: fileNames[i] });
+      const docCol = doc.file.columns;
+      columns.push(...docCol)
+    }
+
+    console.log(columns);
+    res.json({ columns });
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Error getting columns' });
+    console.error(error);
+    res.status(500).json({ error: 'Error getting columns' });
   }
 }
 
-module.exports = { fileHandler, getAllColumns };
+const getData = async (req, res) => {
+  try {
+    const query = req.query.queryColumn;
+    const columnArr = query.split(",").map((c) => c.trim());
+    const docs = [];
+
+    for (let i = 0; i < columnArr.length; i++) {
+      const doc = await Upload.findOne({ 'file.columns': { $in: columnArr[i] } });
+      docs.push({
+        fileName: doc.name,
+        columnName: columnArr[i]
+      });
+    }
+    const fileData = [];
+
+    for (let i = 0; i < docs.length; i++) {
+      const doc = docs[i];
+      const filePath = `uploads/${doc.fileName}`;
+      const csv = fs.readFileSync(filePath, 'utf-8');
+      const records = csv.split('\n').map(row => row.split(','));
+      const header = records[0];
+
+      const columnIndices = [];
+      for (let j = 0; j < header.length; j++) {
+        if (doc.columnName === header[j].trim()) {
+          columnIndices.push(j);
+        }
+      }
+      const data = [];
+      for (let j = 1; j < records.length; j++) {
+        const row = records[j];
+        const rowData = {};
+        for (let k = 0; k < columnIndices.length; k++) {
+          const columnIndex = columnIndices[k];
+          
+          if(row[columnIndex] !== undefined)
+          rowData[header[columnIndex].trim()] = row[columnIndex].trim();
+        }
+        data.push(rowData);
+      }
+
+      fileData.push({
+        fileName: doc.fileName,
+        columnName: doc.columnName,
+        data: data,
+      });
+    }
+
+    return res.json({ fileData });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error getting data' });
+  }
+}
+
+module.exports = { fileHandler, getAllColumns, getData };
 
 

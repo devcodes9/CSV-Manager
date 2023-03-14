@@ -1,4 +1,4 @@
-const { fileHandler, getAllColumns } = require("../controllers/files.js");
+const { fileHandler, getAllColumns, getData } = require("../controllers/files.js");
 const multer = require('multer');
 const express = require("express");
 const util = require("util");
@@ -20,5 +20,6 @@ var uploadFilesMiddleware = util.promisify(singleUpload);
 
 router.post('/upload-csv', uploadFilesMiddleware, fileHandler);
 router.post('/columns',uploadFilesMiddleware, getAllColumns);
+router.get('/data', getData);
 
 module.exports = router;
