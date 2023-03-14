@@ -1,6 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const fileRouter = require("./routes/files.js")
 // const cookieParser = require("cookie-parser");
 var cors = require('cors')
 
@@ -22,7 +23,10 @@ app.use(
 
 const connect = async () => {
     try {
-        await mongoose.connect(process.env.MONGO);
+        await mongoose.connect(process.env.MONGO, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
         console.log("Connected to Database!");
     } catch (error) {
         throw error;
@@ -40,7 +44,10 @@ mongoose.connection.on("connected", () => {
 //midllewares
 // app.use(cookieParser());
 app.use(express.json());
-
+app.use("/api/v1", fileRouter)
+app.use((error, req, res, next) => {
+    console.log('This is the rejected field ->', error.field);
+  });
 app.listen(8080, () => {
     connect();
     console.log("Listening on port 8080!");
