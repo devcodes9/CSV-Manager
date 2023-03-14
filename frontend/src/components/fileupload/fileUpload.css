@@ -1,0 +1,35 @@
+.btn{
+    padding: 8px 12px;
+    background-color: rgb(19, 63, 65);
+    border-radius: 15px;
+    color: white;
+    cursor: pointer;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.btnColumn {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 15px;
+    padding: 8px 15px;
+}
+
+.succ{
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.success{
+    color: green;
+  font-weight: bold;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+
+.table{
+    display: flex;
+    flex-direction: row;
+    /* flex-wrap: wrap; */
+    /* align-items: center; */
+    justify-content: center; 
+    margin-top: 20px;
+    margin-bottom: 20px;
+}

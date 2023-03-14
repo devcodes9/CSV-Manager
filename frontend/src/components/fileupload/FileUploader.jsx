@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import Papa from 'papaparse';
 import axios from 'axios';
+import './fileUpload.css';
+
 
 const FileUploader = () => {
     const [selectedFiles, setSelectedFiles] = useState([]);
@@ -75,36 +76,40 @@ const FileUploader = () => {
 
     return (
         <div>
-            <input type="file" name="file" multiple onChange={handleFileInputChange} />
-            <button onClick={handleUpload}>Upload</button>
-            {alert ? <><span>Uploaded succesfully</span><div><button onClick={handleAvailable}>Show Available Columns</button></div></> : <><span></span></>}
+            <input  type="file" name="file" multiple onChange={handleFileInputChange} />
+            <button onClick={handleUpload} className={'btn btnColumn'}>Upload</button>
+            {alert ? <><div className={'succ'}><span className={'success'}>Uploaded succesfully</span></div><div style={{"marginBottom" : "15px" }}><button className={'btn btnColumn'} onClick={handleAvailable}>Show Available Columns</button></div></> : <><span></span></>}
             {/* {selectOpen && <div>{selectedColumns.map((column) => {
                 return (<div key={column}>{column}</div>)
             })}</div>} */}
 
-            {selectOpen && <div><table border="2" style={{ borderCollapse: "collapse", margin: "auto" }}>
+            {selectOpen && 
+            <div>
+            <table border="2" style={{ borderCollapse: "collapse", margin: "auto", "borderRadius": "12px", fontFamily: "Georgia, 'Times New Roman', Times, serif" }}>
                 <thead>
                     <tr>
-                        <th>Columns</th>
+                        <th style={{"padding": "8px 20px"}}>Available Columns</th>
                     </tr>
                 </thead>
-                <tr>
+                
                     {selectedColumns.map((column) => (
-                        <tr><td key={column}>{column}</td></tr>
+                        <tr><td style={{"padding": "8px 20px"}} key={column}>{column}</td></tr>
                     ))}
-                </tr>
+                
             </table>
             </div>}
 
             <h3>Search for data(comma separated column names)</h3>
-            <input type="text" onChange={handleSearchQuery} placeholder="eg: Name, Age, Gender" />
-            <button onClick={handleGetData}>Get Data</button>
+            <input style={{padding: "8px 15px", marginLeft: "12px",  borderRadius: "15px", fontFamily: "Georgia"}} type="text" onChange={handleSearchQuery} placeholder="eg: Name, Age, Gender" />
+            <button style={{padding: "8px 12px", marginLeft: "12px", borderRadius: "15px"}} className={"btn btnColumn"} onClick={handleGetData}>Get Data</button>
+            
+            <div className={'table'}>
             {openData && data !== undefined &&  (
                 data.map((item) => {
-                    return(<table border="2" style={{ borderCollapse: "collapse", margin: "auto" }}>
+                    return(<table border="1" style={{ borderCollapse: "collapse", "borderRadius": "12px", fontFamily: "Georgia, 'Times New Roman', Times, serif" }} >
                     <thead>
                         <tr>
-                            <th>{item.columnName}</th>
+                            <th style={{"padding": "8px 20px"}}>{item.columnName}</th>
                         </tr>
                     </thead>
                     {console.log(item)}
@@ -113,7 +118,7 @@ const FileUploader = () => {
                             <tbody>
                             <tr>
                             {console.log(val)}
-                                <td>{val[item.columnName]}</td>
+                                <td style={{"padding": "8px 20px"}}>{val[item.columnName]}</td>
                             </tr>
                             </tbody>
                         );
@@ -124,6 +129,7 @@ const FileUploader = () => {
                 )}
             {/* {openData &&
             )} */}
+            </div>
         </div >
     );
 };
