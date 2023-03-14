@@ -99,24 +99,31 @@ const FileUploader = () => {
             <h3>Search for data(comma separated column names)</h3>
             <input type="text" onChange={handleSearchQuery} placeholder="eg: Name, Age, Gender" />
             <button onClick={handleGetData}>Get Data</button>
-            {openData && (
-                <table>
+            {openData && data !== undefined &&  (
+                data.map((item) => {
+                    return(<table border="2" style={{ borderCollapse: "collapse", margin: "auto" }}>
                     <thead>
                         <tr>
-                            <th>File Name</th>
-                            <th>Column Name</th>
+                            <th>{item.columnName}</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {data !== undefined && data.map((item) => (
-                            <tr key={item.fileName + item.columnName}>
-                                <td>{item.fileName}</td>
-                                <td>{item.columnName}</td>
+                    {console.log(item)}
+                    {item.data.map((val) => {
+                        return (
+                            <tbody>
+                            <tr>
+                            {console.log(val)}
+                                <td>{val[item.columnName]}</td>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            )}
+                            </tbody>
+                        );
+                    })}
+                    
+                </table>)
+                })
+                )}
+            {/* {openData &&
+            )} */}
         </div >
     );
 };
