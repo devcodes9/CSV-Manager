@@ -21,17 +21,13 @@ const FileUploader = () => {
     const handleUpload = async () => {
         const formData = new FormData();
         let nameArr = [];
-        // Loop through each selected file and append it to the FormData object
+
         for (let i = 0; i < selectedFiles.length; i++) {
             formData.append('file', selectedFiles[i]);
-            // console.log(selectedFiles[i]);
             nameArr.push(selectedFiles[i].name);
         }
 
-        // console.log(nameArr)
-
         try {
-            // Make a POST request to the backend API to store the data in the database
             const config = {
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -117,7 +113,6 @@ const FileUploader = () => {
                         return (
                             <tbody>
                             <tr>
-                            {console.log(val)}
                                 <td style={{"padding": "8px 20px"}}>{val[item.columnName]}</td>
                             </tr>
                             </tbody>
@@ -127,8 +122,6 @@ const FileUploader = () => {
                 </table>)
                 })
                 )}
-            {/* {openData &&
-            )} */}
             </div>
         </div >
     );

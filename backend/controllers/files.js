@@ -4,7 +4,7 @@ const fs = require('fs');
 const collect = require('collect.js');
 const csv = require('csv-parser');
 
-//Define a schema for the uploaded data
+//Data schema 
 const uploadSchema = new mongoose.Schema({
   name: String,
   file: {
@@ -16,7 +16,7 @@ const uploadSchema = new mongoose.Schema({
 });
 
 
-// Create a model based on the schema
+// Creating Model of Schema
 const Upload = mongoose.model('Upload', uploadSchema);
 
 const readCSVFile = (filePath) => {
@@ -68,7 +68,6 @@ const getAllColumns = async (req, res) => {
   try {
     console.log(req.body);
     var files = req.body;
-    // const columns = await Upload.distinct('file.columns');
     // console.log(files)
     const columns = [];
 
