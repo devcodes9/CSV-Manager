@@ -16,6 +16,7 @@ const uploadSchema = new mongoose.Schema({
 
 // Create a model based on the schema
 const Upload = mongoose.model('Upload', uploadSchema);
+
 const readCSVFile = (filePath) => {
   return new Promise((resolve, reject) => {
     fs.readFile(filePath, (err, data) => {
@@ -28,7 +29,7 @@ const readCSVFile = (filePath) => {
   });
 };
 const fileHandler = async (req, res) => {
-  console.log(req.files)
+  // console.log(req.files)
 
   const n = req.files.length;
 
@@ -61,6 +62,30 @@ const fileHandler = async (req, res) => {
 };
 
 
-module.exports = { fileHandler };
+const getAllColumns = async (req, res) => {
+  try {
+      console.log(req.body);
+      var files = req.body;
+      // const columns = await Upload.distinct('file.columns');
+      // console.log(files)
+      const columns = [];
+
+      var fileNames = Object.values(files);
+
+      for(let i = 0; i < fileNames.length; i++){
+        const doc = await Upload.findOne({name: fileNames[i]});
+        const docCol = doc.file.columns;
+        columns.push(...docCol)
+      }
+      
+      console.log(columns);
+      res.json({ columns });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error getting columns' });
+  }
+}
+
+module.exports = { fileHandler, getAllColumns };
 
 

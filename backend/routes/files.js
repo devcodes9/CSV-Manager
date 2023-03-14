@@ -1,6 +1,7 @@
-const { fileHandler } = require("../controllers/files.js");
+const { fileHandler, getAllColumns } = require("../controllers/files.js");
 const multer = require('multer');
 const express = require("express");
+const util = require("util");
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -12,18 +13,12 @@ const storage = multer.diskStorage({
     },
 });
 
-// const singleUpload = multer({ storage: storage }).single('newFile');
+// const singleUpload = multer({ storage: storage }).array('file', 100);
 
 const singleUpload = multer({ storage: storage }).array("file", 100);
-router.post('/upload-csv', singleUpload, fileHandler);
-router.get('/columns', async (req, res) => {
-    try {
-        const columns = await Upload.distinct('file.columns');
-        res.json({ columns });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error getting columns' });
-    }
-});
+var uploadFilesMiddleware = util.promisify(singleUpload);
 
-module.exports = router
+router.post('/upload-csv', uploadFilesMiddleware, fileHandler);
+router.post('/columns',uploadFilesMiddleware, getAllColumns);
+
+module.exports = router;
