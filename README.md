@@ -1,5 +1,5 @@
 
-# OneAssure CSV Manager
+# CSV Manager
 
 Created a basic web application which:
 
